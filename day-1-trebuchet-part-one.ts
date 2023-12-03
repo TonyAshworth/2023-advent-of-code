@@ -13,7 +13,6 @@ lineReader.on('line', (line) => {
     const first = line.slice(0, 1);
     const last = line.slice(-1);
     const value = +(`${first}${last}`)
-    console.log(`${line} turns into ${first} + ${last} = ${value}`);
     total += value;
     console.log(`Total is now ${total} after adding ${value}`);
 });
