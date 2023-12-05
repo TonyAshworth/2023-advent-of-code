@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day-1-calibration.txt'),
+    input: fs.createReadStream('./resources/day1calibration.txt'),
     terminal: false,
 });
 
