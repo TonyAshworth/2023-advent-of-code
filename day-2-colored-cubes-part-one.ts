@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day2input.txt'),
+    input: fs.createReadStream('./resources/day-2-input.txt'),
     terminal: false,
 });
 

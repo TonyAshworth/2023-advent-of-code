@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day1calibration.txt'),
+    input: fs.createReadStream('./resources/day-1-calibration.txt'),
     terminal: false,
 });
 
-const output = fs.createWriteStream('./resources/day1calibration-converted.csv');
+const output = fs.createWriteStream('./resources/day-1-calibration-converted.csv');
 
 var total = 0;
 

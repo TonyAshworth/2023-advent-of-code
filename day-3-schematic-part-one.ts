@@ -24,7 +24,7 @@ import * as readline from 'readline';
 
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day3input.txt'),
+    input: fs.createReadStream('./resources/day-3-input.txt'),
     terminal: false,
 });
 
