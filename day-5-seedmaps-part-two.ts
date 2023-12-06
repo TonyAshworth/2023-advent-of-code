@@ -8,21 +8,9 @@ const lineReader = readline.createInterface({
 
 let lineNumber = 0;
 let mapIndex = 0;
-let mapMatrix = [[], []];
 let seedInputs = [];
-
-// var seedMapParts = [`seed`, `soil`, `fertilizer`, `water`, `light`, `temperature`, `humidity`, `location`];
-
-// class seedMapData {
-//     seed: number;
-//     soil: number;
-//     fertilizer: number;
-//     water: number;
-//     light: number;
-//     temperature: number;
-//     humidity: number;
-//     location: number;
-// }
+let remap = [];
+let result = [];
 
 function parseDesiredSeeds(line: string) {
     let pairSet = {start: 0, end: 0};
@@ -75,17 +63,20 @@ lineReader.on('close', () => {
     for (let i = 0; i < seedInputs.length; i++) {
         let seedSet = seedInputs[i];
         // console.log(`Processing seed set ${seedSet}`);
-        let seed = +seedSet["start"];
+        const seedMin = +seedSet["start"];
         const seedMax = +seedSet["end"];
         // console.log(`Seed is ${seed} and seed max is ${seedMax}`);
+        let seed = seedMin;
         while (seed <= seedMax) {
             let seedCopy = seed;
-            // console.log("Seed is " + seedCopy);
+            // console.log("Seed is " + seed);
             mapMatrix.forEach(element => {
                 let appliedDelta = false;
                 element.forEach(mapElement => {
-                    // console.log(`Checking if ${seedCopy} is in range ${mapElement.fromLower} to ${mapElement.fromHigher}`);
-                    if (seedCopy >= mapElement.fromLower && seedCopy <= mapElement.fromHigher && !appliedDelta) {
+                    if (seedMin >= mapElement.fromHigher || seedMax <= mapElement.fromLower) {
+                        //do nothing;
+                    }
+                    if (seed >= mapElement.fromLower && seed <= mapElement.fromHigher && !appliedDelta) {
                         // console.log(`Seed ${seedCopy} is in range ${mapElement.fromLower} to ${mapElement.fromHigher} applying delta ${mapElement.delta}`)
                         seedCopy = seedCopy + mapElement.delta;
                         appliedDelta = true;
