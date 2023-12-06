@@ -27,9 +27,9 @@ function processAdjustmentData(line: string) {
     var mapParts = line.split(" ");
 
     // get the parts of the line
-    var fromLower = +mapParts[1];
-    var fromHigher = fromLower + +(mapParts[2]) - 1;
-    var delta = +mapParts[0] - fromLower;
+    let fromLower = +mapParts[1];
+    let fromHigher = fromLower + +(mapParts[2]) - 1;
+    let delta = +mapParts[0] - fromLower;
 
     // figure out if any other matrix values already map for this range
     adjustmentMap.push({fromLower, fromHigher, delta});
