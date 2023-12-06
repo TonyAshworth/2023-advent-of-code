@@ -65,8 +65,6 @@ function calculate() {
                     let newSeedInput = {start: map.fromHigher + 1, end: seedCopy.end, processed: false};
                     seedInputs.push(newSeedInput);
                     console.log("Created New Input " + JSON.stringify(newSeedInput));
-
-
                 }
             } else if (seedCopy.end >= map.fromLower && seedCopy.end <= map.fromHigher) {
                 console.log(`Partial match on end of range`);
@@ -83,8 +81,7 @@ function calculate() {
                 console.log("Created New Input " + JSON.stringify(newSeedInput));
             } else {
                 // console.log(`skip`);
-                // range is outside of the map
-                // do nothing
+                // range is outside of the map so do nothing
             }
         }
     }
