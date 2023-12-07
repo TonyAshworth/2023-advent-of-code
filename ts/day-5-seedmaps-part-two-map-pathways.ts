@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
-import _ from 'lodash';
+import 'lodash';
 
 const lineReader = readline.createInterface({
     input: fs.createReadStream('./resources/day-5-input.txt'),
