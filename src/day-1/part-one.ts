@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('resources/day-1-calibration.txt'),
+    input: fs.createReadStream('input.txt'),
     terminal: false,
 });
 
@@ -20,4 +20,4 @@ lineReader.on('close', () => {
     console.log(`Final Total is ${total}`);
 });
 
-// final answer is 54632
+// final answer is 55538

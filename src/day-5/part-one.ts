@@ -2,10 +2,11 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day-5-input.txt'),
+    input: fs.createReadStream('./input.txt'),
     terminal: false,
 });
 
+var total = 0;
 var lineNumber = 0;
 var desiredSeeds: seedMapData[] = [];
 var from: string;
@@ -23,23 +24,11 @@ class seedMapData {
     location: number;
 }
 
-// lol this did NOT work, it ran out of memory even trying it
-// i suspected that would be the case, but i wanted to try it anyway
-
 function parseDesiredSeeds(line: string) {
-    var pairSet = {start: 0, end: 0};
     line.substring(7).split(" ").every((seedInput) => {
-        if (pairSet.start === 0) {
-            pairSet.start = +seedInput;
-        } else {
-            pairSet.end = pairSet.start + +seedInput;
-            
-            for (var i = pairSet.start; i <= pairSet.end; i++) {
-                let newSeed = new seedMapData;
-                newSeed.seed = i;
-                desiredSeeds.push(newSeed);
-            }
-        }
+        let newSeed = new seedMapData;
+        newSeed.seed = +seedInput;
+        desiredSeeds.push(newSeed);
         return true;
     });
     console.log(`Desired seeds are ${JSON.stringify(desiredSeeds)}`);
@@ -103,4 +92,4 @@ lineReader.on('close', () => {
     console.log(`Closest location is ${closestLocation}`);
 });
 
-// final answer is 54632
+// final answer is 457535844

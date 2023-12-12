@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day-2-input.txt'),
+    input: fs.createReadStream('./input.txt'),
     terminal: false,
 });
 
@@ -54,18 +54,23 @@ class game {
     }
    
     IsValidGame(redLimit: number, greenLimit: number, blueLimit: number): boolean {
-        console.log(`Game ${this.game} has ${this.red} red, ${this.green} green, and ${this.blue} blue.`);
+        // console.log(`Game ${this.game} has ${this.red} red, ${this.green} green, and ${this.blue} blue.`);
         if (this.red > redLimit) {
-            console.log(`Game ${this.game} has too many red cubes.`);
+            // console.log(`Game ${this.game} has too many red cubes.`);
         }
         if (this.green > greenLimit) {
-            console.log(`Game ${this.game} has too many green cubes.`);
+            // console.log(`Game ${this.game} has too many green cubes.`);
         }
         if (this.blue > blueLimit) {
-            console.log(`Game ${this.game} has too many blue cubes.`);
+            // console.log(`Game ${this.game} has too many blue cubes.`);
         }
-        console.log(`Game ${this.game} is valid.`);
+        // console.log(`Game ${this.game} is valid.`);
         return this.red <= redLimit && this.green <= greenLimit && this.blue <= blueLimit;
+    }
+
+    calculatePower(): number {
+        // console.log(`Game ${this.game} has ${this.red} red, ${this.green} green, and ${this.blue} blue.`);
+        return this.red * this.green * this.blue;
     }
   }
 
@@ -73,20 +78,25 @@ var total = 0;
 
 function parseLine(input: string): number {
     var gameForLine = new game(input);
-    if (gameForLine.IsValidGame(12, 13, 14)) {
-        return gameForLine.game;
-    }
-    return 0;
+    // if (gameForLine.IsValidGame(12, 13, 14)) {
+    //     return gameForLine.game;
+    // }
+    // return 0;
+    return gameForLine.calculatePower();
 }
 
 lineReader.on('line', (line) => {
     var value = parseLine(line);
     total += value;
     if (value > 0) {
-        console.log(`Total is now ${total} after adding ${value}`);
+        // console.log(`Total is now ${total} after adding ${value}`);
     } else {
-        console.log(`Total is still ${total}`);
+        // console.log(`Total is still ${total}`);
     }
 });
 
-// final answer is ????
+lineReader.on('close', () => {
+    console.log(`Total is ${total}`);
+});
+
+// final answer is 66363

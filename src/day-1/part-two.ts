@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day-1-calibration.txt'),
+    input: fs.createReadStream('./input.txt'),
     terminal: false,
 });
 
-const output = fs.createWriteStream('./resources/day-1-calibration-converted.csv');
+const output = fs.createWriteStream('./converted.csv');
 
 var total = 0;
 
@@ -45,11 +45,15 @@ lineReader.on('line', (inputLine) => {
     const first = line.slice(0, 1);
     const last = line.slice(-1);
     const value = +(`${first}${last}`)
-    console.log(`${inputLine} > ${line} turns into ${first} + ${last} = ${value}`);
+    // console.log(`${inputLine} > ${line} turns into ${first} + ${last} = ${value}`);
     total += value;
-    console.log(`Total is now ${total} after adding ${value}`);
+    // console.log(`Total is now ${total} after adding ${value}`);
     output.write(`${inputLine},${line},${first},${last},${value}\n`);
 });
 
-// final answer is 54019
+lineReader.on('close', () => {
+    console.log(`Final Total is ${total}`);
+});
+
+// final answer is 54875
 

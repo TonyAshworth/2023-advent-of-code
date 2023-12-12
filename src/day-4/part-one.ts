@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day-4-input copy.txt'),
+    input: fs.createReadStream('./input.txt'),
     terminal: false,
 });
 
@@ -51,7 +51,11 @@ function parseCard(input: string): number {
 lineReader.on('line', (line) => {
     var cardValue = parseCard(line);
     total += cardValue;
-    console.log(`Total is ${total}`);
+    // console.log(`Total is ${total}`);
 });
 
-// final answer is 54632
+lineReader.on('close', () => {
+    console.log(`Final Total is ${total}`);
+});
+
+// final answer is 25004

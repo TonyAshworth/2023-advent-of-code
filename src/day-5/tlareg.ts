@@ -1,9 +1,8 @@
 // https://adventofcode.com/2023/day/5
-// taken from https://github.com/tlareg/advent-of-code/blob/master/src/2023/day05/index.ts
 
 import { readFileSync } from 'fs';
 
-const solution = solve(readInput(`./resources/day-5-input.txt`));
+const solution = solve(readInput(`./input.txt`));
 console.log(solution);
 
 type MapEntry = {

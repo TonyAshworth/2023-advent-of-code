@@ -24,7 +24,7 @@ import * as readline from 'readline';
 
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day-3-input.txt'),
+    input: fs.createReadStream('./input.txt'),
     terminal: false,
 });
 
@@ -50,7 +50,8 @@ class partNumber {
 }
 
 var total = 0;
-const symbolsValues = "*/$+&@#%=-".split("");
+const gearsSymbol = "*";
+const symbolsValues = "/$+&@#%=-.".split("");
 const numbersValues = "0123456789".split("");
 
 var parts = [];
@@ -60,9 +61,9 @@ function parseLine(line: string, index: number): string {
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
     if (symbolsValues.includes(char)) {
-      symbolsCoordinates.push(`{ x: ${i}, y: ${index}}`);
-    } else if ( char === "." ) {
       // do nothing
+    } else if ( char === "*" ) {
+      symbolsCoordinates.push(`{ x: ${i}, y: ${index}}`);
     } else {
       // it's a number
       const lowX = i - 1;
@@ -96,19 +97,22 @@ lineReader.on('line', (line) => {
 });
 
 lineReader.on('close', () => {
-  parts.forEach(part => {
-    // console.log(part.toString());
-    for (let index = 0; index < symbolsCoordinates.length; index++) {
-      const element = symbolsCoordinates[index];
+  for (let index = 0; index < symbolsCoordinates.length; index++) {
+    const element = symbolsCoordinates[index];
+    var gearMultipliers = [];
+    parts.forEach(part => {
       if (part.coordinates.includes(element)) {
-        // console.log(`part ${part.value} has a symbol at ${JSON.stringify(element)}`);
-        total += +(part.value);
-        break;
+        gearMultipliers.push(part.value);
+        // console.log(`found ${element} in ${part.toString()}`);
       }
+    });
+
+    if (gearMultipliers.length == 2) {
+      total += gearMultipliers[0] * gearMultipliers[1];
     }
-  });
+  }
   // console.log(JSON.stringify(symbolsCoordinates));
   console.log(`total: ${total}`);
 });
 
-// final answer is ???
+// final answer is 91031374

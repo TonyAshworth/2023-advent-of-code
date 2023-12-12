@@ -3,7 +3,7 @@ import { forEach } from 'lodash';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
-    input: fs.createReadStream('./resources/day-5-input.txt'),
+    input: fs.createReadStream('./input.txt'),
     terminal: false,
 });
 
