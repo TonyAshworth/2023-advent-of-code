@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { forEach } from 'lodash';
 import * as readline from 'readline';
 
 const lineReader = readline.createInterface({
@@ -8,6 +9,7 @@ const lineReader = readline.createInterface({
 
 var adjustmentMap = [];
 var seedInputs = [];
+var mapTo = "";
 
 function parseDesiredSeeds(line: string) {
     var pairSet = {start: 0, end: 0, originStart: 0, originEnd: 0, processed: false, calculations: []};
@@ -38,29 +40,49 @@ function processAdjustmentData(line: string) {
 }
 
 function calculate() {
-    var seedsToAddOnNextIteration = [];
+    console.log(`-------------------`);
+    let mappedSeeds = [];
+    adjustmentMap = adjustmentMap.sort((a, b) => {
+        return a.fromLower - b.fromLower;
+    });
+    seedInputs = seedInputs.sort((a, b) => {
+        return a.start - b.start;
+    });
     for (var mapIndex = 0; mapIndex < adjustmentMap.length; mapIndex++) {
         const map = adjustmentMap[mapIndex];
-        // console.log(`Processing adjustment map ${JSON.stringify(map)}`);
-        for (var seedIndex = 0; seedIndex < seedInputs.length; seedIndex++) {
-            const seedCopy = seedInputs[seedIndex];
-            if (seedCopy.processed) {
+        let seedIndex = 0;
+        let seedIndexMax = seedInputs.length;
+        let processingSeeds = true;
+        console.log(`Processing adjustment map ${JSON.stringify(map)}`);
+        while (processingSeeds) {
+            if (seedIndex >= seedIndexMax || seedInputs.length === 0) {
+                break;
+            }
+            if (seedInputs[seedIndex] == null) {
+                seedInputs.splice(seedIndex, 1);
                 continue;
             }
+            const seedCopy = {...seedInputs[seedIndex], calculations: [...seedInputs[seedIndex].calculations]};
+            console.log(`Processing seed with ${JSON.stringify(seedCopy)}`);
+            Object.freeze(seedCopy);
             if (seedCopy.start >= map.fromLower && seedCopy.start <= map.fromHigher) {
                 if (seedCopy.end <= map.fromHigher) {
-                    // console.log(`Range fully encompassed`);
+                    console.log(`Range fully encompassed`);
                     seedInputs[seedIndex].start += map.delta;
                     seedInputs[seedIndex].end += map.delta;
-                    seedInputs[seedIndex].processed = true;
-                    seedInputs[seedIndex].calculations.push(map.delta);
+                    seedInputs[seedIndex].calculations.push(`${mapTo}-${map.delta}`);
+                    mappedSeeds.push(seedInputs[seedIndex]);
+                    console.log(`Pushed output ${JSON.stringify(seedInputs[seedIndex])} to mappedSeeds`);
+                    seedInputs.splice(seedIndex, 1);
                 } else {
-                    // console.log(`Partial match on start of range`);
+                    console.log(`Partial match on start of range`);
                     // range extends beyond the map (start is in, end is out)
                     seedInputs[seedIndex].start += map.delta;
                     seedInputs[seedIndex].end = map.fromHigher + map.delta;
-                    seedInputs[seedIndex].processed = true;
-                    seedInputs[seedIndex].calculations.push(map.delta);
+                    seedInputs[seedIndex].calculations.push(`${mapTo}-${map.delta}`);
+                    mappedSeeds.push(seedInputs[seedIndex]);
+                    console.log(`Pushed output ${JSON.stringify(seedInputs[seedIndex])} to mappedSeeds`);
+                    seedInputs.splice(seedIndex, 1);
 
                     // create new input of the unmatched portion
                     let newSeedInput = {
@@ -71,18 +93,20 @@ function calculate() {
                         originStart: seedCopy.originStart,
                         originEnd: seedCopy.originEnd
                     };
-                    seedsToAddOnNextIteration.push(newSeedInput);
-                    // console.log("Created New Input " + JSON.stringify(newSeedInput));
+                    seedInputs.push(newSeedInput);
+                    seedIndexMax++;
+                    console.log("Created New Input " + JSON.stringify(newSeedInput));
                 }
             } else if (seedCopy.end >= map.fromLower && seedCopy.end <= map.fromHigher) {
-                // console.log(`Partial match on end of range`);
+                console.log(`Partial match on end of range`);
 
                 // range extends beyond the map (end is in, start is out)
                 seedInputs[seedIndex].start = map.fromLower + map.delta;
                 seedInputs[seedIndex].end += map.delta;
-                seedInputs[seedIndex].processed = true;
-                seedInputs[seedIndex].calculations.push(map.delta);
-                // console.log(`Processed range ${JSON.stringify(seedCopy)} into ${JSON.stringify(seedInputs[seedIndex])} with delta ${map.delta}`);
+                seedInputs[seedIndex].calculations.push(`${mapTo}-${map.delta}`);
+                mappedSeeds.push(seedInputs[seedIndex]);
+                console.log(`Pushed output ${JSON.stringify(seedInputs[seedIndex])} to mappedSeeds`);
+                seedInputs.splice(seedIndex, 1);
 
                 // create new input of the unmatched portion
                 let newSeedInput = {
@@ -93,16 +117,20 @@ function calculate() {
                     originStart: seedCopy.originStart,
                     originEnd: seedCopy.originEnd
                 };
-                seedsToAddOnNextIteration.push(newSeedInput);
-                // console.log("Created New Input " + JSON.stringify(newSeedInput));
+                seedInputs.push(newSeedInput);
+                seedIndexMax++;
+
+                console.log("Created New Input " + JSON.stringify(newSeedInput));
             } else if (seedCopy.start < map.fromLower && seedCopy.end > map.fromHigher) {
-                // console.log(`Range extends outside of the map in both directions :facepalm:`);
+                console.log(`Range extends outside of the map in both directions`);
 
                 // range extends beyond the map in both directions
                 seedInputs[seedIndex].start = map.fromLower + map.delta;
                 seedInputs[seedIndex].end = map.fromHigher + map.delta;
-                seedInputs[seedIndex].processed = true;
-                seedInputs[seedIndex].calculations.push(map.delta);
+                seedInputs[seedIndex].calculations.push(`${mapTo}-${map.delta}`);
+                mappedSeeds.push(seedInputs[seedIndex]);
+                console.log(`Pushed output ${JSON.stringify(seedInputs[seedIndex])} to mappedSeeds`);
+                seedInputs.splice(seedIndex, 1);
 
                 // create new input of the unmatched portions
                 let newSeedInputLower = {
@@ -113,7 +141,9 @@ function calculate() {
                     originStart: seedCopy.originStart,
                     originEnd: seedCopy.originEnd
                 };
-                seedsToAddOnNextIteration.push(newSeedInputLower);
+                seedInputs.push(newSeedInputLower);
+                seedIndexMax++;
+                console.log("Created New Input " + JSON.stringify(newSeedInputLower));
 
                 let newSeedInputUpper = {
                     start: map.fromHigher + 1,
@@ -123,18 +153,27 @@ function calculate() {
                     originStart: seedCopy.originStart,
                     originEnd: seedCopy.originEnd
                 };
-                seedsToAddOnNextIteration.push(newSeedInputUpper);
+                seedInputs.push(newSeedInputUpper);
+                seedIndexMax++;
+                console.log("Created New Input " + JSON.stringify(newSeedInputUpper));
+
             } else {
-                // console.log(`skip`);
+                console.log(`skip because range is outside of the map`);
                 // range is outside of the map so do nothing
+                seedIndex++;
             }
         }
     }
-    seedInputs.forEach(element => {
-        element.processed = false;
-    });
-    seedInputs.push(...seedsToAddOnNextIteration);
-    seedsToAddOnNextIteration = [];
+    console.log(`calculation complete`);
+    seedInputs.push(...mappedSeeds);
+    for(var i = seedInputs.length - 1; i >= 0; i--) {
+        if(seedInputs[i] == null) {
+            seedInputs.splice(i, 1);
+        } else {
+            seedInputs[i].processed = false;
+        }
+    }
+    console.log(`Seed inputs length is now ${seedInputs.length}`);
 }
 
 lineReader.on('line', (line) => {
@@ -142,10 +181,11 @@ lineReader.on('line', (line) => {
         parseDesiredSeeds(line);
         console.log(`Seed inputs are ${JSON.stringify(seedInputs)}`);
     } else if (line.includes("-to-")) {
-        // console.log(`--- --- processing section for ${line}`);
+        console.log(`--- --- processing section for ${line}`);
+        mapTo = line.split("-to-")[1].replace(" map:", "");
         // do nothing
     } else if (line.trim() === "") {
-        // console.log(`Adjustment map is ${JSON.stringify(adjustmentMap)}`);
+        console.log(`Adjustment map is ${JSON.stringify(adjustmentMap)}`);
         // calculate adjustments
         calculate();
         // clear adjustment map

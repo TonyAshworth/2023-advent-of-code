@@ -92,4 +92,4 @@ lineReader.on('close', () => {
     console.log(`Closest location is ${closestLocation}`);
 });
 
-// final answer is 54632
+// final answer is 457535844
